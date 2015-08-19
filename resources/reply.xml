@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="reply">
+	<typeAlias alias="ReplyVo" type="com.bit2015.mysite.vo.ReplyVo" />
+	<resultMap class="ReplyVo" id="resultMapList">
+		<result column="no" property="no" />
+		<result column="ARTICLE_NO" property="articleNo" />
+		<result column="CONTENT" property="content" />
+		<result column="MEMBER_NO" property="memberNo" />
+		<result column="MEMBER_NAME" property="memberName" />
+		<result column="REG_DATE" property="regDate" />
+		<result column="group_no" property="groupNo" />
+		<result column="order_no" property="orderNo" />
+		<result column="depth" property="depth" />
+	</resultMap>
+
+	<select id="list" resultMap="resultMapList" parameterClass="java.lang.Long">
+		<![CDATA[
+			SELECT 
+				NO,
+		    	ARTICLE_NO,
+		        CONTENT,
+		        MEMBER_NO,
+		        MEMBER_NAME,
+		        TO_CHAR (REG_DATE, 'YY-MM-DD HH24:MI') AS REG_DATE,
+		        group_no,
+		        order_no,
+		        DEPTH 
+  				FROM reply
+		 		WHERE ARTICLE_NO = #NO#
+		 		order by group_no ASC, order_no ASC
+			]]>
+	</select>
+
+	<select id="getreplybyno" resultMap="resultMapList"
+		parameterClass="java.lang.Long">
+	<![CDATA[
+		select * from reply where no=#no#
+	]]>
+	</select>
+
+
+	<insert id="insert" parameterClass="ReplyVo">
+		<![CDATA[
+		 	insert into reply 
+			VALUES(reply_seq.nextval, #articleNo#, #content#, #memberNo#, #memberName#, sysdate, (select max(group_no+1) from reply), 0 ,0)
+		]]>
+
+	</insert>
+
+	<insert id="replyreply" parameterClass="ReplyVo">
+		<![CDATA[
+		 	insert into reply 
+			VALUES(reply_seq.nextval, #articleNo#, #content#, #memberNo#, #memberName#, sysdate, #groupNo#, #orderNo#, #depth#)
+		]]>
+	</insert>
+
+
+	<delete id="delete" parameterClass="java.lang.Long">
+	<![CDATA[
+		delete 
+		from reply
+		where no=#no#
+		]]>
+	</delete>
+
+
+
+
+</sqlMap>

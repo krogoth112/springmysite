@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="board">
+	<typeAlias alias="BoardVo" type="com.bit2015.mysite.vo.BoardVo" />
+	<resultMap class="BoardVo" id="resultMapList">
+		<result column="no" property="no" />
+		<result column="title" property="title" />
+		<result column="content" property="content" />
+		<result column="member_no" property="memberNo" />
+		<result column="member_name" property="memberName" />
+		<result column="view_cnt" property="viewCnt" />
+		<result column="reg_date" property="regDate" />
+	</resultMap>
+
+	<select id="search" resultMap="resultMapList">
+		<![CDATA[
+			SELECT * 
+			from BOARD 
+			where content=#content#, title=#title#
+		]]>
+	</select>
+
+	<insert id="insert" parameterClass="BoardVo">
+		<![CDATA[
+			insert into BOARD (NO, TITLE, CONTENT, MEMBER_NO, MEMBER_NAME, REG_DATE) 
+			VALUES (board_seq.nextval, #title# , #content#, #memberNo#, #memberName#, sysdate)
+		]]>
+	</insert>
+
+	<delete id="delete" parameterClass="java.lang.Long">
+		<![CDATA[
+			delete 
+			from BOARD 
+			where no=#no#
+		]]>
+	</delete>
+	
+	<select id="view" parameterClass="java.lang.Long" resultMap="resultMapList">
+	<![CDATA[
+		select * 
+		from board
+		where no=#no#
+	]]>
+	
+	
+	</select>
+	<update id="update" parameterClass="BoardVo">
+	<![CDATA[
+		UPDATE board SET title=#title#, content=#content# 
+		WHERE no=#no#	
+	]]>
+	</update>
+	
+	<select id="getbyno" parameterClass="java.lang.Long" resultMap="resultMapList">
+		<![CDATA[
+		SELECT no, title, content, member_no, member_name, view_cnt, TO_CHAR(reg_date, 'HH12:MI') as reg_date
+		FROM board 
+		where no=#no#
+		
+		]]>
+
+	</select>
+	
+	<select id="count" resultClass="java.lang.Integer" >
+		<![CDATA[
+		SELECT count(*)
+		from board
+		]]>
+	</select>
+	
+	<select id="listkwd" resultMap="resultMapList" parameterClass="java.lang.String">
+		<![CDATA[
+		SELECT no, title, content, member_no, member_name, view_cnt, TO_CHAR(reg_date, 'YY-MM-DD HH12:MI') as reg_date
+		from board
+		where title LIKE '%' ||#kwd# || '%' or 
+			content LIKE '%' ||#kwd# || '%'
+		order by no desc
+		
+		]]>
+	</select>
+	
+	<select id="list" resultMap="resultMapList" >
+		<![CDATA[
+		SELECT no, title, content, member_no, member_name, view_cnt, TO_CHAR(reg_date, 'HH12:MI') as reg_date
+		from board
+		order by no desc
+		]]>
+	</select>
+
+</sqlMap>
+
